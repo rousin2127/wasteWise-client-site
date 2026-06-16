@@ -1,82 +1,68 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import useAuth from '../../../hooks/useAuth';
+import { mainNavLinks } from '../../../config/siteNav';
 
 const Navbar = () => {
-    const {user, logOut}= useAuth();
-    const navigate = useNavigate()
+  const { user } = useAuth();
 
-    const handleLogOut = () =>{
-        logOut()
-        .then(res =>{
-            navigate('/login')
-        })
-        
-        .catch(error =>{
-            console.log(error)
-        })
-    }
+  const navLinkClass = ({ isActive }) =>
+    `text-sm font-medium transition-colors hover:text-emerald-600 ${
+      isActive ? 'text-emerald-600' : 'text-slate-600'
+    }`;
 
-    const links = [
-        { label: 'Home', to: '/' },
-        { label: 'Dashboard', to: '/dashboard' },
-    ];
-
-    return (
-        <nav className="  navbar bg-base-100 shadow-sm sticky top-0 z-50 ">
-            {/* Mobile View: Left aligned burger menu */}
-            {/* Desktop View: Left aligned burger (hidden) */}
-            <div className='navbar max-w-7xl mx-auto'>
-            <div className="navbar-start w-1/4 lg:w-1/2 ">
-                <div className="dropdown">
-                    <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /> 
-                        </svg>
-                    </div>
-                    <ul
-                        tabIndex={0}
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow">
-                        {/* Map used for Mobile Links */}
-                        {links.map((link, index) => (
-                            <li key={index}><Link to={link.to}>{link.label}</Link></li>
-                        ))}
-                    </ul>
-                </div>
-                
-                {/* Desktop Logo (Hidden on mobile) */}
-                <h2 className="text-2xl font-bold text-gray-950 tracking-wide hidden lg:block ">
-                        Waste<span className="text-emerald-400">Wise</span>
-                    </h2>
+  return (
+    <nav className="navbar bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
+      <div className="navbar max-w-7xl mx-auto w-full px-2">
+        <div className="navbar-start">
+          <div className="dropdown lg:hidden">
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </div>
+            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-white rounded-box z-50 mt-3 w-52 p-2 shadow-lg border">
+              {mainNavLinks.map((link) => (
+                <li key={link.to}>
+                  <NavLink to={link.to} className={navLinkClass}>{link.label}</NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Link to="/" className="text-xl md:text-2xl font-bold text-slate-900 tracking-wide">
+            Waste<span className="text-emerald-500">Wise</span>
+          </Link>
+        </div>
 
-            {/* Mobile View: Centered Logo */}
-            {/* Desktop View: Centered Navigation Links */}
-            <div className="navbar-center w-1/2 lg:w-auto flex justify-center lg:block">
-                {/* Mobile-only Logo */}
-<h2 className="text-2xl font-bold text-gray-950 tracking-wide lg:hidden text-center">
-                        Waste<span className="text-emerald-400">Wise</span>
-                    </h2>                
-                {/* Desktop-only Navigation Links */}
-                <ul className="menu menu-horizontal px-1 gap-4 hidden lg:flex">
-                    {/* Map used for Desktop Links */}
-                    {links.map((link, index) => (
-                        <li key={index}><Link to={link.to}>{link.label}</Link></li>
-                    ))}
-                </ul>
-            </div>
+        <div className="navbar-center hidden lg:flex">
+          <ul className="menu menu-horizontal px-1 gap-1">
+            {mainNavLinks.map((link) => (
+              <li key={link.to}>
+                <NavLink to={link.to} className={navLinkClass} end={link.to === '/'}>
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-            {/* Right aligned action button */}
-            <div className="navbar-end w-1/4 lg:w-1/2">
-                {
-                    user ? <a onClick={handleLogOut} className="btn btn-sm md:btn-md bg-[#009661]">Log Out</a> :
-                    <Link to={'/login'} className="btn btn-sm md:btn-md bg-[#009661]">Login</Link>
-
-                }
-            </div>
-            </div>
-        </nav>
-    );
+        <div className="navbar-end gap-2">
+          {user ? (
+            <Link to="/dashboard" className="btn btn-sm md:btn-md bg-emerald-500 hover:bg-emerald-600 text-white border-0">
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="btn btn-sm md:btn-md btn-ghost hidden sm:inline-flex">Login</Link>
+              <Link to="/register" className="btn btn-sm md:btn-md bg-emerald-500 hover:bg-emerald-600 text-white border-0">
+                Get Started
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;
