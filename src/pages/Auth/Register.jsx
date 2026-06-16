@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 
 const Register = () => {
@@ -10,6 +10,7 @@ const Register = () => {
     // Added 'trigger' here to manually force validation on changes
     const { register, handleSubmit, watch, trigger, formState: { errors } } = useForm();
     const {registerUser}= useAuth()
+    const navigate = useNavigate();
 
     const emailValue = watch('email');
     const phoneValue = watch('phone');
@@ -35,7 +36,7 @@ const Register = () => {
 
         registerUser(payload)
             .then(() => {
-                alert('Registration Successful!');
+                navigate('/dashboard');
             })
             .catch(error => {
                 setServerError(error.message || 'Registration failed');
